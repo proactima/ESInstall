@@ -6,29 +6,40 @@ export ES_MARVEL_VERSION=1.0.2
 
 function SetupVim {
     echo Installing VIM Config
-    wget --no-check-certificate https://raw.github.com/proactima/ESInstall/master/ConfigFiles/vimrc
+    wget --no-check-certificate https://raw.github.com/proactima/ESInstall/master/ConfigFiles/vimrc -O vimrc > /tmp/aptVimrc 2>&1
     mv ~/vimrc ~/.vimrc
 }
 
 function UpdateSystem {
     echo Updating system to latest packages
-    sudo apt-get update
-    sudo apt-get dist-upgrade -y
+    sudo apt-get update  > /tmp/aptUpdate 2>&1
+    sudo apt-get dist-upgrade -y > /tmp/aptDistUpgrade.log 2>&1
+}
+
+function InstallNode {
+    echo Installing Node.js
+    sudo apt-get install nodejs npm -y > /tmp/aptNode.log 2>&1
+
+    echo Installing Windows Azure Node.js module...
+    npm install azure > /tmp/nodeInstall.log 2>&1
+
+    echo Installing Azure Storage Node.js wrapper module
+    wget --no-check-certificate https://raw.github.com/jeffwilcox/waz-updown/master/updown.js -O updown.js > /tmp/updownInstall.log 2>&1
 }
 
 function InstallJava {
     echo Installing Java
-    sudo apt-get install openjdk-7-jre-headless -y
+    sudo apt-get install openjdk-7-jre-headless -y > /tmp/aptJava 2>&1
 }
 
 function InstallES {
     echo Installing ElasticSearch
-    curl -s https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.deb -o elasticsearch-$ES_VERSION.deb
-    sudo dpkg -i elasticsearch-$ES_VERSION.deb
+    curl -s https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.deb -o elasticsearch-$ES_VERSION.deb > /tmp/aptWgetES 2>&1
+    sudo dpkg -i elasticsearch-$ES_VERSION.deb > /tmp/aptESInstall 2>&1
 
     echo Installing ElasticSearch plugins
-    sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-cloud-azure/$ES_AZURE_VERSION
-    sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/marvel/$ES_MARVEL_VERSION
+    sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-cloud-azure/$ES_AZURE_VERSION > /tmp/aptPluginAzure 2>&1
+    sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/marvel/$ES_MARVEL_VERSION > /tmp/aptPluginMarvel 2>&1
 }
 
 function AskToConfigureDataDisk {
@@ -71,6 +82,30 @@ ENDPARTITION
     sudo chown elasticsearch /mnt/es/data
 }
 
+function ConfigureAzure {
+    if [ -z "$AZURE_STORAGE_ACCOUNT" ]; then
+        read -p "Windows Azure storage account name? " storageAccount
+        export AZURE_STORAGE_ACCOUNT=$storageAccount
+        echo
+    fi
+
+    if [ -z "$AZURE_STORAGE_ACCESS_KEY" ]; then
+        read -s -p "Account access key? " storageKey
+        export AZURE_STORAGE_ACCESS_KEY=$storageKey
+        echo
+    fi
+}
+
+function DownloadFiles {
+    nodejs updown.js config down uxrisk-staging-keystore.pkcs12 > /tmp/downloaded.log 2>&1
+    nodejs updown.js config down elasticsearch-staging.yml > /tmp/downloader.log 2>&1
+}
+
+function ConfigureES {
+    read -p "Node name? " nodeName
+    sed -i s/NODENAME/$nodeName/i elasticsearch-staging.yml
+}
+
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
 function ask {
     while true; do
@@ -108,5 +143,9 @@ cd ~
 #SetupVim
 #UpdateSystem
 #InstallJava
+#InstallNode
 #InstallES
-AskToConfigureDataDisk
+#AskToConfigureDataDisk
+ConfigureAzure
+DownloadFiles
+ConfigureES
