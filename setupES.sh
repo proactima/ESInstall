@@ -103,7 +103,7 @@ function DownloadFiles {
 
 function ConfigureES {
     read -p "Node name? " nodeName
-    sed -i s/NODENAME/$nodeName/i elasticsearch-staging.yml
+    sed -i "s/NODENAME/$nodeName/i" elasticsearch-staging.yml
 }
 
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
