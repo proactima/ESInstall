@@ -42,7 +42,7 @@ function AskToConfigureDataDisk {
 }
 
 function ConfigureDataDisk {
-    esDataPath=/mnt/data
+    esDataPath=/mnt/es/data
 
     echo Checking for attached Windows Azure data disk
     while [ ! -e /dev/sdc ]; do echo waiting for /dev/sdc empty disk to attach; sleep 20; done
@@ -52,7 +52,7 @@ function ConfigureDataDisk {
 n
 p
 1
-1
+
 
 w
 ENDPARTITION
@@ -61,12 +61,14 @@ ENDPARTITION
     sudo mkfs.ext4 /dev/sdc1 > /tmp/format.log 2>&1
 
     echo Preparing permanent data disk mount point at /mnt/data
-    sudo mkdir /mnt/data
-    echo '/dev/sdc1 /mnt/data ext4 defaults,auto,noatime,nodiratime,noexec 0 0' | sudo tee -a /etc/fstab
+    sudo mkdir /mnt/es
+    echo '/dev/sdc1 /mnt/es ext4 defaults,auto,noatime,nodiratime,noexec 0 0' | sudo tee -a /etc/fstab
 
     echo Mounting the new disk...
-    sudo mount /mnt/data
-    sudo e2label /dev/sdc1 /mnt/data
+    sudo mount /mnt/es
+    sudo e2label /dev/sdc1 /mnt/es
+    sudo mkdir -p /mnt/es/data
+    sudo chown elasticsearch /mnt/es/data
 }
 
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
