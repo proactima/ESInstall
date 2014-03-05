@@ -31,13 +31,42 @@ function InstallES {
     sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/marvel/$ES_MARVEL_VERSION
 }
 
+function AskToConfigureDataDisk {
+    if ask "Have you attaced a data disk? " Y; then
+        if [ -e /dev/sdc1 ]; then
+            echo "Partition already exists, skipping"
+        else
+            ConfigureDataDisk
+        fi
+    fi
+}
+
 function ConfigureDataDisk {
     esDataPath=/mnt/data
 
     echo Checking for attached Windows Azure data disk
     while [ ! -e /dev/sdc ]; do echo waiting for /dev/sdc empty disk to attach; sleep 20; done
 
-    
+    echo Partitioning...
+    sudo fdisk /dev/sdc <<ENDPARTITION > /tmp/fdisk.log 2>&1
+n
+p
+1
+1
+
+w
+ENDPARTITION
+
+    echo Formatting with EXT4
+    sudo mkfs.ext4 /dev/sdc1 > /tmp/format.log 2>&1
+
+    echo Preparing permanent data disk mount point at /mnt/data
+    sudo mkdir /mnt/data
+    echo '/dev/sdc1 /mnt/data ext4 defaults,auto,noatime,nodiratime,noexec 0 0' | sudo tee -a /etc/fstab
+
+    echo Mounting the new disk...
+    sudo mount /mnt/data
+    sudo e2label /dev/sdc1 /mnt/data
 }
 
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
@@ -74,8 +103,8 @@ function ask {
 
 cd ~
 
-SetupVim
+#SetupVim
 #UpdateSystem
 #InstallJava
 #InstallES
-ConfigureDataDisk
+AskToConfigureDataDisk
