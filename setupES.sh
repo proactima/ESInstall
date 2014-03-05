@@ -35,7 +35,7 @@ function InstallJava {
 function InstallES {
     echo Installing ElasticSearch
     curl -s https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-$ES_VERSION.deb -o elasticsearch-$ES_VERSION.deb > /tmp/aptWgetES 2>&1
-    sudo dpkg -i elasticsearch-$ES_VERSION.deb > /tmp/aptESInstall 2>&1
+    sudo dpkg -i elasticsearch-$ES_VERSION.deb --force-all > /tmp/aptESInstall 2>&1
 
     echo Installing ElasticSearch plugins
     sudo /usr/share/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-cloud-azure/$ES_AZURE_VERSION > /tmp/aptPluginAzure 2>&1
@@ -104,6 +104,7 @@ function DownloadFiles {
 function ConfigureES {
     read -p "Node name? " nodeName
     sed -i "s/NODENAME/$nodeName/i" elasticsearch-staging.yml
+    sudo cp ~/elasticsearch-staging.yml /etc/elasticsearch/elasticsearch.yml
 }
 
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
