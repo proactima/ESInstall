@@ -140,12 +140,12 @@ function ask {
 
 cd ~
 
-#SetupVim
-#UpdateSystem
-#InstallJava
-#InstallNode
-#InstallES
-#AskToConfigureDataDisk
+SetupVim
+UpdateSystem
+InstallJava
+InstallNode
+InstallES
+AskToConfigureDataDisk
 ConfigureAzure
 DownloadFiles
 ConfigureES
