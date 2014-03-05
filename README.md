@@ -1,3 +1,6 @@
+Based on:
+https://github.com/jeffwilcox/waz-mongodb
+
 To use:
 
 wget --no-check-certificate https://raw.github.com/proactima/ESInstall/master/setupES.sh -O setupES.sh
