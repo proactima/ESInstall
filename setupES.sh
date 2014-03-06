@@ -108,6 +108,11 @@ function ConfigureES {
     sudo cp ~/elasticsearch-staging.yml /etc/elasticsearch/elasticsearch.yml
 }
 
+function Reboot {
+    echo Rebooting...
+    sudo reboot
+}
+
 # Awesome ask function by @davejamesmiller https://gist.github.com/davejamesmiller/1965569
 function ask {
     while true; do
@@ -151,3 +156,4 @@ AskToConfigureDataDisk
 ConfigureAzure
 DownloadFiles
 ConfigureES
+Reboot
