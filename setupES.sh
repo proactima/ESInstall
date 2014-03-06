@@ -14,6 +14,7 @@ function UpdateSystem {
     echo Updating system to latest packages
     sudo apt-get update  > /tmp/aptUpdate 2>&1
     sudo apt-get dist-upgrade -y > /tmp/aptDistUpgrade.log 2>&1
+    sudo apt-get install -y htop
 }
 
 function InstallNode {
