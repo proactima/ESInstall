@@ -1,8 +1,9 @@
 #!/bin/bash
 
-export ES_VERSION=1.0.1
-export ES_AZURE_VERSION=2.0.0
-export ES_MARVEL_VERSION=1.0.2
+ES_VERSION=1.0.1
+ES_AZURE_VERSION=2.0.0
+ES_MARVEL_VERSION=1.0.2
+ES_KIBANA_VERSION=3.0.0milestone5
 
 function SetupVim {
     echo Installing VIM Config
@@ -98,10 +99,10 @@ function ConfigureAzure {
 }
 
 function DownloadFiles {
-    nodejs updown.js config down uxrisk-staging-keystore.pkcs12 > /tmp/downloaded.log 2>&1
-    nodejs updown.js config down elasticsearch-staging.yml > /tmp/downloader.log 2>&1
-    nodejs updown.js config down logging-staging.yml > /tmp/downloader.log 2>&1
-    nodejs updown.js config down elasticsearch-staging > /tmp/downloader.log 2>&1
+    nodejs updown.js config down uxrisk-staging-keystore.pkcs12 >> /tmp/downloaded.log 2>&1
+    nodejs updown.js config down elasticsearch-staging.yml >> /tmp/downloader.log 2>&1
+    nodejs updown.js config down logging-staging.yml >> /tmp/downloader.log 2>&1
+    nodejs updown.js config down elasticsearch-staging >> /tmp/downloader.log 2>&1
 }
 
 function ConfigureES {
@@ -110,6 +111,28 @@ function ConfigureES {
     sudo cp ~/elasticsearch-staging.yml /etc/elasticsearch/elasticsearch.yml
     sudo cp ~/logging-staging.yml /etc/elasticsearch/logging.yml
     sudp cp ~/elasticsearch-staging /etc/defaults/elasticsearch
+}
+
+function DoStagingSpecific {
+    if ask "Is this staging? " N; then
+        echo Staging detected
+        echo Installing Nginx...
+        sudo apt-get install nginx -y
+        
+        echo Installing Kibana
+        KIBANA_DIRECTORY=kibana-$ES_KIBANA_VERSION
+        KIBANA_FILENAME=$KIBANA_DIRECTORY.tar.gz
+        wget --no-check-certificate https://download.elasticsearch.org/kibana/kibana/$KIBANA_FILENAME -O ~/$KIBANA_FILENAME > /tmp/wgetKibana 2>&1
+        mkdir -p /tmp/kibana
+        tar zxvf ~/$KIBANA_FILENAME -C /tmp/kibana > /tmp/tarKibana 2>&1
+        sudo rm -rf /usr/share/nginx/html/*
+        sudo cp -R /tmp/kibana/$KIBANA_DIRECTORY/* /usr/share/nginx/html/
+        rm -rf /tmp/kibana
+        
+        echo Configuring Nginx
+        nodejs updown.js config down nginx-staging >> /tmp/downloader.log 2>&1
+        sudo cp ~/nginx-staging /etc/nginx/sites-available/default > /tmp/nginx.log 2>&1
+    fi
 }
 
 function Reboot {
@@ -160,4 +183,5 @@ AskToConfigureDataDisk
 ConfigureAzure
 DownloadFiles
 ConfigureES
+DoStagingSpecific
 Reboot
