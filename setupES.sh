@@ -132,6 +132,8 @@ function DoStagingSpecific {
         echo Configuring Nginx
         nodejs updown.js config down nginx-staging >> /tmp/downloader.log 2>&1
         sudo cp ~/nginx-staging /etc/nginx/sites-available/default > /tmp/nginx.log 2>&1
+        
+        sudo service nginx start
     fi
 }
 
