@@ -100,12 +100,16 @@ function ConfigureAzure {
 function DownloadFiles {
     nodejs updown.js config down uxrisk-staging-keystore.pkcs12 > /tmp/downloaded.log 2>&1
     nodejs updown.js config down elasticsearch-staging.yml > /tmp/downloader.log 2>&1
+    nodejs updown.js config down logging-staging.yml > /tmp/downloader.log 2>&1
+    nodejs updown.js config down elasticsearch-staging > /tmp/downloader.log 2>&1
 }
 
 function ConfigureES {
     read -p "Node name? " nodeName
     sed -i "s/NODENAME/$nodeName/i" elasticsearch-staging.yml
     sudo cp ~/elasticsearch-staging.yml /etc/elasticsearch/elasticsearch.yml
+    sudo cp ~/logging-staging.yml /etc/elasticsearch/logging.yml
+    sudp cp ~/elasticsearch-staging /etc/defaults/elasticsearch
 }
 
 function Reboot {
