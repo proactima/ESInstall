@@ -107,10 +107,10 @@ function DownloadFiles {
 
 function ConfigureES {
     read -p "Node name? " nodeName
-    sed -i "s/NODENAME/$nodeName/i" elasticsearch-staging.yml
-    sudo cp ~/elasticsearch-staging.yml /etc/elasticsearch/elasticsearch.yml
-    sudo cp ~/logging-staging.yml /etc/elasticsearch/logging.yml
-    sudp cp ~/elasticsearch-staging /etc/defaults/elasticsearch
+    sed -i "s/NODENAME/$nodeName/i" elasticsearch.yml
+    sudo cp ~/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
+    sudo cp ~/logging.yml /etc/elasticsearch/logging.yml
+    sudp cp ~/elasticsearch /etc/defaults/elasticsearch
 }
 
 function DoStagingSpecific {
