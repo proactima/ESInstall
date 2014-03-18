@@ -99,10 +99,10 @@ function ConfigureAzure {
 }
 
 function DownloadFiles {
-    nodejs updown.js config down uxrisk-staging-keystore.pkcs12 >> /tmp/downloaded.log 2>&1
-    nodejs updown.js config down elasticsearch-staging.yml >> /tmp/downloader.log 2>&1
-    nodejs updown.js config down logging-staging.yml >> /tmp/downloader.log 2>&1
-    nodejs updown.js config down elasticsearch-staging >> /tmp/downloader.log 2>&1
+    nodejs updown.js config down uxrisk-keystore.pkcs12 >> /tmp/downloaded.log 2>&1
+    nodejs updown.js config down elasticsearch.yml >> /tmp/downloader.log 2>&1
+    nodejs updown.js config down logging.yml >> /tmp/downloader.log 2>&1
+    nodejs updown.js config down elasticsearch >> /tmp/downloader.log 2>&1
 }
 
 function ConfigureES {
