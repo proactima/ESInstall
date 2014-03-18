@@ -110,7 +110,7 @@ function ConfigureES {
     sed -i "s/NODENAME/$nodeName/i" elasticsearch.yml
     sudo cp ~/elasticsearch.yml /etc/elasticsearch/elasticsearch.yml
     sudo cp ~/logging.yml /etc/elasticsearch/logging.yml
-    sudo cp ~/elasticsearch /etc/defaults/elasticsearch
+    sudo cp ~/elasticsearch /etc/default/elasticsearch
 }
 
 function DoStagingSpecific {
